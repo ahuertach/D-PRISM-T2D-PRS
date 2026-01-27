@@ -1,10 +1,10 @@
 Package: DPRISMt2d
-Title: What the Package Does (One Line, Title Case)
+Title: DPRISM Type 2 Diabetes PRS Calculator
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+    person("Alicia", "Huerta-Chagoya", , "ahuerta@broadinstitute.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: Calculates multi-ancestry type 2 diabetes PRS from D-PRISM Consortium (2026).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
