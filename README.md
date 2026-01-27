@@ -1,2 +1,129 @@
 # D-PRISM-T2D-PRS
-DPRISM Consortium T2D multi-ancestry PRS.
+Source: Huerta-Chagoya A., Kim J., et al., The Lancet of Diabetes and Endocrinology, 2025. [medRxiv preprint](https://www.medrxiv.org/content/10.1101/2025.07.21.25331778v1)
+
+## Overview
+
+**[Diabetes Polygenic Risk Scores in Multiple ancestries (D-PRISM)](https://primedconsortium.org/study/d-prism)** is an international consortium to develop PRS for different types of diabetes and progression across the lifespan in diverse ancestries. 
+
+This study addresses a critical gap by delivering the most comprehensive and rigorously tested set of multi-ancestry PRSs for T2D. By making the PRS weights publicly available through the [PGS Catalog](https://www.pgscatalog.org/publication/PGP000445/), we hope to provide a valuable resource for researchers and clinicians seeking to advance genetic risk stratification and develop prevention strategies for T2D.
+
+## Workflow
+
+### Tools
+
+- Plink (>=1.9)
+- R (>=3.5)
+
+### 1. Get necessary weights for your target cohort.
+
+These are **multi-ancestry PRSs** trained for five ancestries. However, each leverage genetic information from all ancestries. Therefore, before applying them to downstream analyses, you have to combine the **five ancestry-specific scores into a single metascore**.
+
+First, determine which multi-ancestry PRS you want to apply and download the corresponding set of five ancestry-specific weight files required to construct the single metascore for that specific ancestry group.
+
+For example:
+  If the closest genetic ancestry of your target cohort is the Admixed American (AMR), you might want to apply the multi-ancestry PRS trained for AMR. Thus, download the [weights for AMR trained PRS](https://www.pgscatalog.org/publication/PGP000445/).
+
+
+See below for a full list:
+  
+  | Ancestry where the multi-ancestry PRS was trained | Set of five ancestry-specific weights for the training ancestry | PGS IDs | PGS Names |
+  | -------------- | -------------- | -------------- | ------------- |
+  | African/American-like (AFR) | [Weights for AFR trained PRS](https://www.pgscatalog.org/publication/PGP000445/) | PGS005353-5357 | `DPRISM_T2DPRS_trainedforAFR_[AFR/AMR/EAS/EUR/SAS]weights` |
+  | Admixed American-like (AMR) | [Weights for AMR trained PRS](https://www.pgscatalog.org/publication/PGP000445/) | PGS005358-5362 | `DPRISM_T2DPRS_trainedforAMR_[AFR/AMR/EAS/EUR/SAS]weights` |
+  | East Asian-like (EAS) | [Weights for EAS trained PRS](https://www.pgscatalog.org/publication/PGP000445/) | PGS005363-5367 | `DPRISM_T2DPRS_trainedforEAS_[AFR/AMR/EAS/EUR/SAS]weights` |
+  | European-like (EUR) | [Weights for EUR trained PRS](https://www.pgscatalog.org/publication/PGP000445/) | PGS005368-5372 | `DPRISM_T2DPRS_trainedforEUR_[AFR/AMR/EAS/EUR/SAS]weights` |
+  | South Asian-like (SAS) | [Weights for SAS trained PRS](https://www.pgscatalog.org/publication/PGP000445/) | PGS005353-5377 | `DPRISM_T2DPRS_trainedforSAS_[AFR/AMR/EAS/EUR/SAS]weights` |
+  
+  ### 2. Generate individual ancestry-specific scores.
+  
+  Apply the set of five ancestry-specific weight files to your genotype data using PLINK. This step will produce five separate polygenic score values per individual.
+
+Example of usage:
+  
+  ```bash
+yourcohortprefix="mycohort"
+training_ancestry="AMR" 
+
+WEIGHTS=("AFR" "AMR" "EAS" "EUR" "SAS")
+for weight_ancestry in "${WEIGHTS[@]}"; do
+
+WEIGHT="DPRISM_T2DPRS_trainedfor${training_ancestry}_${weight_ancestry}weights.txt.gz"
+OUTPUT="${yourcohortprefix}_PRStrainedfor${training_ancestry}_${weight_ancestry}weights"
+
+plink \
+--bfile "$BFILE_PATH" \
+--score "$WEIGHT" 2 4 6 header \
+--out "$OUTPUT"
+
+done
+```
+
+`--bfile` *(required)*: Path to your genotypes. Basic QC is desirable (*e.g.*, exclude variants with poor imputation quality, palindromic, MAF<0.005).
+
+`--score` *(required)*: Ancestry-specific weight file. Each has one line per scored variant. The variant ID is read from column 2, the effect allele code is read from column 4, and the weight associated with the effect allele is read from the column 6. You can change the variant ID as needed to fit your bim file.
+
+`--out`: Path to save the output file. One line per person.
+
+It is recommended to inspect the `nopred` files. Only a low percentage of predictive variants is expected to be lost. The performance of the multi-ancestry PRS would be compromised otherwise.
+
+In the example, the following five files are expected:
+  
+  - `mycohort_PRStrainedforAMR_AFRweights.profile`
+- `mycohort_PRStrainedforAMR_AMRweights.profile`
+- `mycohort_PRStrainedforAMR_EASweights.profile`
+- `mycohort_PRStrainedforAMR_EURweights.profile`
+- `mycohort_PRStrainedforAMR_SASweights.profile`
+
+### 3. Combine the individual ancestry-specific scores into a metascore.
+
+The final step involves combining the five separate individual scores into a single metascore. This is achieved by linearly combining the five individual scaled scores generated by PLINK. For every individual, the single metascore is calculated using the following general formula:
+  
+  $$metascore = (score_{AFR} \times trained coefficient_{AFR}) + (score_{AMR} \times trained coefficient_{AMR}) + (score_{EAS} \times trained coefficient_{EAS}) + (score_{EUR} \times trained coefficient_{EUR}) + (score_{SAS} \times trained coefficient_{SAS})$$
+  
+  where:
+  
+  $score_{i}$ is the one of the five individual scores calculated by PLINK for the i-th ancestry-specific score (e.g., AFR).
+
+$weight_{i}$ is the trained ancestry-specific coefficient assigned to the i-th ancestry-specific score.
+
+Use `dprism_t2dprs` R function to perform this step. This function automatically scales the individual ancestry-specific scores and applies the trained ancestry-specific coefficients to generate the single metascore.
+
+```r
+devtools::install_github("ahuertach/DPRISMt2d")
+library(DPRISMt2d)
+```
+
+Example of usage:
+  
+  ```r
+dprism_t2dprs(
+  AFR_profile_path = "path/to/yourcohort_AFR.profile", 
+  AMR_profile_path = "path/to/yourcohort_AMR.profile",
+  EAS_profile_path = "path/to/yourcohort_EAS.profile",
+  EUR_profile_path = "path/to/yourcohort_EUR.profile",
+  SAS_profile_path = "path/to/yourcohort_SAS.profile",
+  targetcohort_ancestry = "AMR",
+  output_file_path = "targetcohort_metascore.txt"
+)
+```
+
+In the example:
+  
+  ```r
+dprism_t2dprs(
+  "mycohort_PRStrainedforAMR_AFRweights.profile",
+  "mycohort_PRStrainedforAMR_AFRweights.profile",
+  "mycohort_PRStrainedforAMR_AFRweights.profile",
+  "mycohort_PRStrainedforAMR_AFRweights.profile",
+  "mycohort_PRStrainedforAMR_AFRweights.profile",
+  "AMR",
+  "mycohort_metascore.txt"
+)
+```
+
+The resulting file `mycohort_metascore.txt` will look like this, and the `ZMETASCORE` can be used in downstream analyses.
+```text
+FID IID METASCORE ZMETASCORE
+ID1 ID1 -0.0000000123 1.543
+ID2 ID2 0.0000000056 -0.891
+```
