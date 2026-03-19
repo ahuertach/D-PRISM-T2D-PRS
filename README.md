@@ -1,5 +1,5 @@
 # D-PRISM-T2D-PRS
-Reference: Huerta-Chagoya A., Kim J., et al., The Lancet of Diabetes and Endocrinology, 2025. [medRxiv preprint](https://www.medrxiv.org/content/10.1101/2025.07.21.25331778v1)
+Alicia Huerta-Chagoya, Joohyun Kim, et al., Josep M. Mercader, Maggie C.Y. Ng, D-PRISM Consortium, 2025. [medRxiv preprint](https://www.medrxiv.org/content/10.1101/2025.07.21.25331778v1)
 
 ## Overview
 
@@ -21,13 +21,14 @@ These are **multi-ancestry PRSs** trained for five ancestries separately, yet ea
 First, determine which multi-ancestry PRS you want to apply and download the corresponding set of five ancestry-specific weight files required to construct the single metascore for that specific ancestry group.
 
 For example:
-  if the closest genetic ancestry of your target cohort is the Admixed American (AMR), you might want to apply the multi-ancestry PRS trained for AMR. Thus, download `PGS005353-5357` files which include the *ancestry-specific weights for AMR-trained PRS*.
+
+If the closest genetic ancestry of your target cohort is the **Admixed American (AMR)**, you might want to apply the **multi-ancestry PRS trained for AMR**. Thus, download `PGS005353-5357` files which include the ancestry-specific weights for AMR-trained PRS.
+
 
 See below for a full list:
 
-  
   | Ancestry where the multi-ancestry PRS was trained | PGS IDs | PGS Names |
-  | -------------- | -------------- | -------------- | ------------- |
+  | -------------- | -------------- | ------------- |
   | African or American (AFR) | PGS005353-5357 | `DPRISM_T2DPRS_trainedforAFR_[AFR/AMR/EAS/EUR/SAS]weights` |
   | Admixed American (AMR) | PGS005358-5362 | `DPRISM_T2DPRS_trainedforAMR_[AFR/AMR/EAS/EUR/SAS]weights` |
   | East Asian (EAS) | PGS005363-5367 | `DPRISM_T2DPRS_trainedforEAS_[AFR/AMR/EAS/EUR/SAS]weights` |
@@ -39,8 +40,8 @@ See below for a full list:
 Each PGS file contains metadata lines starting with `#`. You must format the files to remove them and retain columns for variant ID, effect allele and weight. See above an example (adjust based on the the variant ID in your genotype files):
 
   ```bash
-  #Example for AMR-trained score files assuming bim files have variant IDs in the chr:position formatted
-  #use position from $8 if your genotypes are in GRCh38 or from $2 if they are in GRCh37
+  #Example for AMR-trained score files assuming bim files have variant IDs in "chr:position"" format
+  #use position from col 8 if your genotypes are in GRCh38 or from col 2 if they are in GRCh37
   zcat PGS005358_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $8 }' | gzip > DPRISM_T2DPRS_trainedforAMR_AFRweights.txt.gz
   zcat PGS005359_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $8 }' | gzip > DPRISM_T2DPRS_trainedforAMR_AMRweights.txt.gz
   zcat PGS005360_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $8 }' | gzip > DPRISM_T2DPRS_trainedforAMR_EASweights.txt.gz
@@ -74,7 +75,7 @@ done
 
 `--score` *(required)*: Formatted ancestry-specific weight file. Each has one line per scored variant. In the example, the variant ID is read from column 1, the effect allele is read from column 2, and the weight associated with the effect allele is read from the column 3. You can change the variant ID as needed to fit your bim file, as well as the column numbers.
 
-`--out`: Path to save the output file. One line per individual.
+`--out`*(required)*: Path to save the output file. One line per individual.
 
 It is recommended to inspect the `nopred` files. Only a low percentage of predictive variants is expected to be lost. The performance of the multi-ancestry PRS would be compromised otherwise.
 
@@ -98,7 +99,7 @@ The final step involves combining the five separate individual scores into a sin
 
   $trained coefficient_{i}$ is the trained ancestry-specific coefficient assigned to the i-th ancestry-specific score.
 
-We  `dprism_t2dprs` R function to perform this step. This function automatically scales the individual ancestry-specific scores and applies the trained ancestry-specific coefficients to generate the single metascore.
+This step is implemented in `dprism_t2dprs` R function. It automatically scales the individual ancestry-specific scores and applies the trained ancestry-specific coefficients to generate the single metascore.
 
 ```r
 devtools::install_github("ahuertach/DPRISMt2d")
@@ -143,7 +144,7 @@ ID2 ID2 0.0000000056 -0.891
 
 ### 3. Downstream Analysis
 
-Once you have generated your `mycohort_dprismt2dprs.txt` file, check the downstream_analyses/ folder for example script on how to plot the distributions and run association testing. You will need to first merge phenotype and covariate columns to your PRS file.
+Once you have generated your `mycohort_dprismt2dprs.txt` file, check the `downstream_analyses/` folder for example script on how to plot the distributions and run association testing. You will need to first merge phenotype and covariate columns to your PRS file.
 
 Example of usage:
 
@@ -156,12 +157,12 @@ prsperformance(
 )
 ```
 
-It will generate standard performance metrics such as OR/SD, AUC with and without the PRS, Nagelkerke r2, as well as PRS density plots in the overall and by status sample, and ROC curves.
+It will generate standard performance metrics such as OR/SD, AUC with and without the PRS, Nagelkerke r2, as well as PRS density plots in the overall and by status sample, and ROC curves. 
 
 ## 📬 Contact & Feedback
 
 **Thank you for using our PRSs!** 
 
-If you have any feedback, encounter unexpected errors, please reach out.
+If you have any feedback, encounter unexpected errors, or have general questions please reach out.
 
 
