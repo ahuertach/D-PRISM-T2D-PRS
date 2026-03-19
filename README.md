@@ -22,7 +22,7 @@ First, determine which multi-ancestry PRS you want to apply and download the cor
 
 For example:
 
-If the closest genetic ancestry of your target cohort is the **Admixed American (AMR)**, you might want to apply the **multi-ancestry PRS trained for AMR**. Thus, download `PGS005353-5357` files which include the ancestry-specific weights for AMR-trained PRS.
+If the closest genetic ancestry of your target cohort is the **Admixed American (AMR)**, you might want to apply the **multi-ancestry PRS trained for AMR**. Thus, download `PGS005358-5362` files which include the ancestry-specific weights for AMR-trained PRS.
 
 
 See below for a full list:
