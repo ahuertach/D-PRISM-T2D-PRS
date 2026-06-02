@@ -1,5 +1,5 @@
 # D-PRISM-T2D-PRS
-Alicia Huerta-Chagoya, Joohyun Kim, et al., Josep M. Mercader, Maggie C.Y. Ng, D-PRISM Consortium, 2025. [medRxiv preprint](https://www.medrxiv.org/content/10.1101/2025.07.21.25331778v1)
+Alicia Huerta-Chagoya, Joohyun Kim, et al., Josep M. Mercader, Maggie C.Y. Ng, D-PRISM Consortium, 2025. [medRxiv preprint](https://www.thelancet.com/journals/landia/article/PIIS2213-8587(25)00405-X/fulltext)
 
 ## Overview
 
@@ -102,7 +102,7 @@ The final step involves combining the five separate individual scores into a sin
 This step is implemented in `dprism_t2dprs` R function. It automatically scales the individual ancestry-specific scores and applies the trained ancestry-specific coefficients to generate the single metascore.
 
 ```r
-devtools::install_github("ahuertach/DPRISMt2d")
+devtools::install_github("ahuertach/D-PRISM-T2D-PRS", subdir="DPRISMt2d")
 library(DPRISMt2d)
 ```
 
