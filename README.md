@@ -1,5 +1,5 @@
 # D-PRISM-T2D-PRS
-Alicia Huerta-Chagoya, Joohyun Kim, et al., Josep M. Mercader, Maggie C.Y. Ng, D-PRISM Consortium, 2025. [medRxiv preprint](https://www.thelancet.com/journals/landia/article/PIIS2213-8587(25)00405-X/fulltext)
+Alicia Huerta-Chagoya, Joohyun Kim, et al., Josep M. Mercader, Maggie C.Y. Ng, D-PRISM Consortium, 2025. [Lancet Diabetes Endocrinol. 2026 Apr 27:S2213-8587(25)00405-X](https://www.thelancet.com/journals/landia/article/PIIS2213-8587(25)00405-X/fulltext)
 
 ## Overview
 
