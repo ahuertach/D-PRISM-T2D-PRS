@@ -97,9 +97,19 @@ The final step involves combining the five separate individual scores into a sin
   
   $score_{i}$ is the one of the five individual scores calculated by PLINK for the i-th ancestry-specific score.
 
-  $trained coefficient_{i}$ is the trained ancestry-specific coefficient assigned to the i-th ancestry-specific score.
+  $trained coefficient_{i}$ is the trained coefficient assigned to the i-th ancestry-specific score.
 
-This step is implemented in `dprism_t2dprs` R function. It automatically scales the individual ancestry-specific scores and applies the trained ancestry-specific coefficients to generate the single metascore.
+To ensure the score is appropriately calibrated, the coefficients vary depending on the primary ancestry of your target cohort. Please apply the pre-trained weights from the table below:
+
+| Target Cohort Ancestry | $trained coef_{AFR}$ | $trained coef_{AMR}$ | $trained coef_{EAS}$ | $trained coef_{EUR}$ | $trained coef_{SAS}$ |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **AFR** | 0.26258 | 0.05058 | 0.01167 | 0.25675 | 0.09701 |
+| **AMR** | 0.06117 | 0.26515 | 0.23973 | 0.62115 | 0.05630 |
+| **EAS** | 0.05231 | 0.08350 | 0.55889 | 0.30485 | 0.05935 |
+| **EUR** | 0.04457 | 0.05245 | 0.11300 | 0.62345 | 0.00089 |
+| **SAS** | 0.10939 | 0.03381 | 0.26606 | 0.53909 | 0.32257 |
+
+**Note:** This step is fully implemented in the `dprism_t2dprs` R function. It automatically scales the individual ancestry-specific scores and applies the correct trained coefficients based on your target cohort's ancestry to generate the single metascore.
 
 ```r
 devtools::install_github("ahuertach/D-PRISM-T2D-PRS", subdir="DPRISMt2d")
