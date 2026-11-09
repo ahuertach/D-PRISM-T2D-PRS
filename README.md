@@ -42,11 +42,11 @@ Each PGS file contains metadata lines starting with `#`. You must format the fil
   ```bash
   #Example for AMR-trained score files assuming bim files have variant IDs in "chr:position"" format
   #use position from col 8 if your genotypes are in GRCh38 or from col 2 if they are in GRCh37
-  zcat PGS005358_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $8 }' | gzip > DPRISM_T2DPRS_trainedforAMR_AFRweights.txt.gz
-  zcat PGS005359_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $8 }' | gzip > DPRISM_T2DPRS_trainedforAMR_AMRweights.txt.gz
-  zcat PGS005360_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $8 }' | gzip > DPRISM_T2DPRS_trainedforAMR_EASweights.txt.gz
-  zcat PGS005361_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $8 }' | gzip > DPRISM_T2DPRS_trainedforAMR_EURweights.txt.gz
-  zcat PGS005362_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $8 }' | gzip > DPRISM_T2DPRS_trainedforAMR_SASweights.txt.gz
+  zcat PGS005358_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $5 }' | gzip > DPRISM_T2DPRS_trainedforAMR_AFRweights.txt.gz
+  zcat PGS005359_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $5 }' | gzip > DPRISM_T2DPRS_trainedforAMR_AMRweights.txt.gz
+  zcat PGS005360_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $5 }' | gzip > DPRISM_T2DPRS_trainedforAMR_EASweights.txt.gz
+  zcat PGS005361_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $5 }' | gzip > DPRISM_T2DPRS_trainedforAMR_EURweights.txt.gz
+  zcat PGS005362_hmPOS_GRCh38.txt.gz | grep -v "^#" | awk 'NR>=1 {print $1":"$8, $3, $5 }' | gzip > DPRISM_T2DPRS_trainedforAMR_SASweights.txt.gz
 ```
 
 Apply the five ancestry-specific formatted files to your genotype data using PLINK. This step will produce five separate polygenic score values per individual.
